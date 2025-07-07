@@ -1,0 +1,46 @@
+Generated Podcast Dialogue
+Article: Introducing Claude 4 \ Anthropic
+Speech Speed: 0.85x
+Target Duration: 3 minutes
+Voice Clone Audio: example_prompt.mp3
+==================================================
+
+Voice Clone Transcript:
+[S1] Open weights text to dialogue model. [S2] You get full control over scripts and voices.
+--------------------------------------------------
+
+Generated Dialogue:
+[S1] Hey, have you heard about the big news from Anthropic? They just announced Claude 4...
+[S2] No, what's that all about? I've been hearing some buzz.
+[S1] Well, they're actually launching two new AI models... Claude Opus 4 and Claude Sonnet 4.
+[S2] Oh interesting! What makes these different from previous versions?
+[S1] So, get this... Claude Opus 4 is being called the world's best coding model, and it can, you know, work on complex tasks for hours at a time.
+[S2] Hours? That's pretty impressive. What kind of tasks are we talking about?
+[S1] Well, it can do things like... sustained coding projects, complex problem-solving, and it even works with something they call "extended thinking."
+[S2] Extended thinking? What does that mean exactly?
+[S1] It's pretty cool actually... Both models can use tools like web search while they're thinking, and they can switch between reasoning and using those tools.
+[S2] That sounds really useful. How's the pricing looking for these new models?
+[S1] They're keeping it consistent with previous versions... Opus 4 is $15/$75 per million tokens, and Sonnet 4 is $3/$15.
+[S2] And what about availability? Can anyone use these?
+[S1] Yeah, they've made it pretty accessible... You can get them through the Anthropic API, Amazon Bedrock, and Google Cloud's Vertex AI.
+[S2] I've been hearing a lot about coding capabilities... How good is it really?
+[S1] Well... according to their benchmarks, Opus 4 is leading with like, 72.5% on SWE-bench, which is pretty impressive for software engineering tasks.
+[S2] What are developers saying about it?
+[S1] Companies like Cursor and Replit are... really positive about it. They're saying it's much better at understanding complex codebases.
+[S2] And what about the Sonnet version? How does that compare?
+[S1] Sonnet 4 is more like... an upgraded version of 3.7, still really good at coding but maybe not quite as powerful as Opus 4.
+[S2] Are there any new features that stand out to you?
+[S1] Yeah, actually... They've added this interesting memory capability where the AI can create and maintain files to store important information.
+[S2] That sounds useful. Any real-world examples?
+[S1] They mentioned that... it can even create a navigation guide while playing Pokémon, which is pretty fascinating when you think about it.
+[S2] That's wild! What about tools for developers?
+[S1] They've actually made Claude Code generally available now... with new extensions for VS Code and JetBrains.
+[S2] How does that work in practice?
+[S1] Basically... it integrates right into your development environment and can show suggested edits inline in your files.
+[S2] That sounds really practical. What about safety measures?
+[S1] Yeah, they've put a lot of thought into that... They've implemented something called AI Safety Levels, going up to ASL-3.
+[S2] Interesting... Do you think this is a significant step forward for AI?
+[S1] You know, I really do... It seems like we're getting closer to having true virtual collaborators that can maintain context and focus over longer periods.
+
+==================================================
+Total lines: 31

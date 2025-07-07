@@ -1,0 +1,537 @@
+#!/usr/bin/env python3
+"""
+Podcast Generator with Kokoro-82M TTS and Claude 3.5 Sonnet via AWS Bedrock
+Version 6.0 - Using Kokoro-82M for longer output windows
+"""
+
+import os
+import argparse
+import requests
+from bs4 import BeautifulSoup
+import torch
+import boto3
+import json
+import warnings
+from pathlib import Path
+import numpy as np
+import soundfile as sf
+import re
+
+# Import Kokoro model
+try:
+    from kokoro import KPipeline
+    KOKORO_AVAILABLE = True
+except ImportError:
+    KOKORO_AVAILABLE = False
+    print("Warning: Kokoro module not found. TTS features will be disabled.")
+    print("Install with: pip install kokoro>=0.9.2 soundfile")
+    print("Also ensure espeak-ng is installed on your system")
+
+warnings.filterwarnings('ignore')
+
+class PodcastGenerator:
+    def __init__(self, use_gpu=True, aws_region='us-west-2', seed=None, speech_speed=0.85, 
+                 s1_voice='af_nova', s2_voice='am_liam'):
+        """Initialize the podcast generator with Kokoro-82M"""
+        self.device = "cuda" if use_gpu and torch.cuda.is_available() else "cpu"
+        print(f"Using device: {self.device}")
+        
+        # Set seed if provided
+        self.seed = seed
+        if seed is not None:
+            torch.manual_seed(seed)
+            if torch.cuda.is_available():
+                torch.cuda.manual_seed(seed)
+            print(f"✓ Random seed set to: {seed}")
+        
+        # Speech speed (0.8-1.0, where lower is slower)
+        self.speech_speed = speech_speed
+        print(f"✓ Speech speed set to: {speech_speed}x")
+        
+        # Voice configuration for Kokoro
+        self.s1_voice = s1_voice
+        self.s2_voice = s2_voice
+        print(f"✓ S1 voice: {s1_voice}, S2 voice: {s2_voice}")
+        
+        # Initialize Bedrock client
+        print("Initializing AWS Bedrock client...")
+        self.bedrock = None
+        
+        try:
+            # Try to initialize Bedrock - will work with IAM roles, environment vars, or AWS CLI config
+            session = boto3.Session(region_name=aws_region)
+            self.bedrock = session.client('bedrock-runtime')
+            self.model_id = "anthropic.claude-3-5-sonnet-20241022-v2:0"
+            print(f"Using Claude 3.5 Sonnet model: {self.model_id}")
+            
+            # Test the connection
+            try:
+                # Simple test - this should work with proper IAM permissions
+                self.bedrock._make_api_call('ListFoundationModels', {})
+                print("✓ Successfully connected to AWS Bedrock")
+            except Exception as test_error:
+                if "AccessDeniedException" in str(test_error):
+                    print("✓ AWS credentials found, but lacking Bedrock permissions")
+                    print("  Ensure your IAM role has bedrock:InvokeModel permission")
+                else:
+                    print(f"✓ AWS Bedrock client initialized (connection test skipped: {type(test_error).__name__})")
+        except Exception as e:
+            print(f"Warning: Could not initialize Bedrock client: {e}")
+            print("")
+            print("To use Bedrock for dialogue generation:")
+            print("  - On EC2: Ensure instance has IAM role with Bedrock permissions")
+            print("  - Locally: Use AWS CLI (aws configure) or set environment variables")
+            print("")
+            print("Continuing without Bedrock - will use fallback dialogue")
+            self.bedrock = None
+        
+        # Load Kokoro models if available
+        if KOKORO_AVAILABLE:
+            print("Loading Kokoro-82M TTS models...")
+            try:
+                # Initialize pipeline - Kokoro uses 'a' for American English
+                self.tts_pipeline = KPipeline(lang_code='a', device=self.device)
+                print(f"✓ Kokoro-82M model loaded successfully")
+                print(f"  - S1 will use voice: {self.s1_voice}")
+                print(f"  - S2 will use voice: {self.s2_voice}")
+                
+                # Store voice mapping
+                self.voice_map = {
+                    'S1': self.s1_voice,
+                    'S2': self.s2_voice
+                }
+            except Exception as e:
+                print(f"Error loading Kokoro-82M: {e}")
+                raise
+        else:
+            print("⚠️  Kokoro model not available - TTS disabled")
+            self.tts_pipeline = None
+    
+    def adjust_audio_speed(self, audio_data, sample_rate, speed_factor):
+        """Adjust audio playback speed using resampling"""
+        # Calculate new length
+        new_length = int(len(audio_data) / speed_factor)
+        
+        # Use linear interpolation to resample
+        indices = np.linspace(0, len(audio_data) - 1, new_length)
+        resampled_audio = np.interp(indices, np.arange(len(audio_data)), audio_data)
+        
+        return resampled_audio.astype(audio_data.dtype)
+    
+    def extract_content_from_url(self, url):
+        """Extract text content from a URL"""
+        try:
+            response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=30)
+            soup = BeautifulSoup(response.content, 'html.parser')
+            
+            # Remove script and style elements
+            for script in soup(["script", "style"]):
+                script.decompose()
+            
+            # Get text
+            text = soup.get_text()
+            lines = (line.strip() for line in text.splitlines())
+            chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+            text = ' '.join(chunk for chunk in chunks if chunk)
+            
+            # Extract title
+            title = soup.find('title')
+            title = title.string if title else "Web Content"
+            
+            # Return more content for longer podcasts
+            return title, text[:20000]
+        except Exception as e:
+            print(f"Error extracting content: {e}")
+            return "Content", "Failed to extract content from URL."
+    
+    def generate_dialogue_with_bedrock(self, content, title, duration_minutes=5):
+        """Generate a dialogue between two hosts using Claude 3.5 Sonnet via Bedrock"""
+        # Calculate approximate exchanges needed (assuming ~3-4 seconds per exchange)
+        target_exchanges = int(duration_minutes * 60 / 3.5)
+        
+        prompt = f"""You are a professional podcast content generator. Your job is to analyze content and create natural, engaging podcast dialogues between two speakers.
+
+Source Material:
+Article Title: {title}
+Article Content: {content[:8000]}...
+
+Your task: Transform this content into a conversational podcast between two speakers using [S1] and [S2] tags.
+
+IMPORTANT: Add natural pauses and pacing cues for slower, more natural speech:
+- Use "..." for brief pauses
+- Use commas liberally for natural breathing points
+- Break longer sentences into shorter chunks
+- Add filler words occasionally like "well", "you know", "I mean"
+
+Target Duration: Generate approximately {target_exchanges} conversational exchanges (about {duration_minutes} minutes of audio)
+
+Example format:
+[S1] Have you heard about this new development in AI? It's... quite fascinating.
+[S2] No, tell me more about it. I'm curious.
+[S1] Well, it's quite interesting... They've created a model that can, you know, understand context better.
+[S2] That sounds incredible! How does it work, exactly?
+
+Dialogue Guidelines:
+- Generate {target_exchanges-5} to {target_exchanges+5} short conversational exchanges
+- Keep responses concise and natural (1-2 sentences typical)
+- Add natural pauses with "..." and commas
+- Include occasional filler words for naturalness
+- DO NOT include any emotional reactions in parentheses
+- Make it sound like a real conversation, not a script
+- Use natural flow and transitions
+- Cover multiple aspects of the topic in depth
+
+Speaker Personalities:
+- [S1]: More analytical, provides facts and context, speaks thoughtfully
+- [S2]: More reactive, asks questions, shows interest through words
+
+Content Focus:
+- Cover the main topic thoroughly
+- Include ALL key points and details
+- Discuss implications and future outlook
+- Make complex topics accessible
+- Add personal insights and reflections
+
+Remember: This is a conversation between two people discussing interesting content. Keep it natural, well-paced, and engaging."""
+
+        if not self.bedrock:
+            print("Bedrock not available, using fallback dialogue")
+            return self.generate_fallback_dialogue()
+            
+        try:
+            # Prepare the request for Bedrock
+            body = json.dumps({
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 8000,
+                "temperature": 0.8,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            })
+            
+            # Make the request
+            print("Calling Claude 3.5 Sonnet via Bedrock...")
+            response = self.bedrock.invoke_model(
+                body=body,
+                modelId=self.model_id,
+                accept='application/json',
+                contentType='application/json'
+            )
+            
+            # Parse the response
+            response_body = json.loads(response.get('body').read())
+            dialogue_text = response_body['content'][0]['text']
+            
+            # Extract dialogue lines
+            dialogue_lines = []
+            for line in dialogue_text.split('\n'):
+                line = line.strip()
+                if line.startswith('[S1]') or line.startswith('[S2]'):
+                    dialogue_lines.append(line)
+            
+            # Join all dialogue lines
+            full_dialogue = '\n'.join(dialogue_lines)
+            
+            # Save dialogue to file
+            dialogue_filename = "generated_dialogue_kokoro.txt"
+            with open(dialogue_filename, 'w', encoding='utf-8') as f:
+                f.write(f"Generated Podcast Dialogue (Kokoro-82M)\n")
+                f.write(f"Article: {title}\n")
+                f.write(f"Speech Speed: {self.speech_speed}x\n")
+                f.write(f"Target Duration: {duration_minutes} minutes\n")
+                f.write(f"S1 Voice: {self.s1_voice}\n")
+                f.write(f"S2 Voice: {self.s2_voice}\n")
+                f.write("="*50 + "\n\n")
+                f.write("Generated Dialogue:\n")
+                f.write(full_dialogue)
+                f.write("\n\n" + "="*50 + "\n")
+                f.write(f"Total lines: {len(dialogue_lines)}\n")
+            
+            print(f"✓ Dialogue saved to: {dialogue_filename}")
+            print(f"✓ Generated {len(dialogue_lines)} dialogue lines")
+            
+            return full_dialogue
+            
+        except Exception as e:
+            print(f"Error with Bedrock: {e}")
+            return self.generate_fallback_dialogue()
+    
+    def generate_fallback_dialogue(self):
+        """Generate a fallback dialogue if Bedrock fails"""
+        return """[S1] Welcome to our tech podcast! Today... we're discussing Claude 4, the latest breakthrough from Anthropic.
+[S2] Oh, I've been hearing a lot about this! What makes Claude 4 so special?
+[S1] Well, it's quite remarkable... They've released two versions - Claude Opus 4 and Claude Sonnet 4. Opus 4 is being called the world's best coding model.
+[S2] Really? That's a bold claim... How does it compare to other models?
+[S1] The benchmarks are impressive... It's scoring 72.5% on SWE-bench, which is, you know, a significant leap forward for coding tasks.
+[S2] That's incredible! What kind of tasks can it handle?
+[S1] Here's where it gets really interesting... It can work continuously for several hours, handling complex tasks that require thousands of steps.
+[S2] Wow, that sounds like... a real game-changer for developers.
+[S1] Absolutely! And there's this new feature called extended thinking with tool use... It can switch between reasoning and using tools like web search.
+[S2] So it's not just generating code, but actually... thinking through problems?
+[S1] Exactly! It's more like having a virtual collaborator than just a code generator.
+[S2] What about the Sonnet version? How does that differ?
+[S1] Sonnet 4 is more for everyday use... Still incredibly capable, but optimized for general tasks. And here's the kicker - it's free for regular users!
+[S2] Free? That's amazing! What about pricing for Opus 4?
+[S1] They're keeping the same pricing structure... $15 per million input tokens and $75 for output tokens.
+[S2] Are companies already using this?
+[S1] Oh yes! GitHub is integrating Sonnet 4 into Copilot... Companies like Replit and Cursor are calling it a huge leap forward.
+[S2] This must have some impressive memory capabilities too...
+[S1] You're right! When given access to local files, it can create memory files to store important information... like building its own knowledge base.
+[S2] That's fascinating! Any interesting examples?
+[S1] They showed a demo where it was playing Pokémon and... creating its own navigation guide to remember where it had been!
+[S2] That's wild! Where can people access these models?
+[S1] Multiple platforms actually... Anthropic's API, Amazon Bedrock, Google Cloud's Vertex AI, and their new Claude Code system.
+[S2] What about safety considerations?
+[S1] They've implemented AI Safety Levels... specifically targeting ASL-3, which shows they're taking responsible development seriously.
+[S2] This really does feel like a major step forward for AI...
+[S1] It is! We're entering an era where AI can be a true collaborator... maintaining context and focus over extended periods.
+[S2] When can people start using it?
+[S1] It's available right now! You can try it through Claude's platform or Claude Code, which integrates with popular development tools.
+[S2] This has been incredibly informative! Thanks for walking us through Claude 4.
+[S1] My pleasure! It's exciting to see how quickly AI is evolving... and making powerful tools accessible to everyone."""
+    
+    def split_dialogue_by_speaker(self, dialogue_text):
+        """Split dialogue into segments by speaker"""
+        segments = []
+        current_segment = []
+        current_speaker = None
+        
+        lines = dialogue_text.strip().split('\n')
+        
+        for line in lines:
+            if line.startswith('[S1]'):
+                if current_segment and current_speaker != 'S1':
+                    segments.append(('S2', '\n'.join(current_segment)))
+                    current_segment = []
+                current_speaker = 'S1'
+                current_segment.append(line)
+            elif line.startswith('[S2]'):
+                if current_segment and current_speaker != 'S2':
+                    segments.append(('S1', '\n'.join(current_segment)))
+                    current_segment = []
+                current_speaker = 'S2'
+                current_segment.append(line)
+            elif line.strip() and current_speaker:
+                # Continue with current speaker
+                current_segment.append(line)
+        
+        # Add the last segment
+        if current_segment and current_speaker:
+            segments.append((current_speaker, '\n'.join(current_segment)))
+        
+        print(f"\nDialogue split into {len(segments)} speaker segments")
+        return segments
+    
+    def generate_audio_with_kokoro(self, dialogue_text, output_file):
+        """Generate audio using Kokoro-82M TTS"""
+        if not KOKORO_AVAILABLE or not self.tts_pipeline:
+            print("⚠️  Kokoro model not available, skipping audio generation")
+            return None
+        
+        try:
+            print("\n3. Generating audio with Kokoro-82M...")
+            print("   Processing dialogue in speaker segments...")
+            
+            # Split dialogue by speaker
+            segments = self.split_dialogue_by_speaker(dialogue_text)
+            
+            audio_segments = []
+            sample_rate = None
+            
+            for i, (speaker, text) in enumerate(segments):
+                print(f"\nProcessing segment {i+1}/{len(segments)} - Speaker: {speaker}")
+                
+                # Clean the text (remove speaker tags)
+                clean_text = re.sub(r'\[S[12]\]', '', text).strip()
+                
+                # Select appropriate voice for speaker
+                voice = self.voice_map[speaker]
+                
+                # Generate audio for this segment
+                print(f"   Generating audio ({len(clean_text)} characters) with voice: {voice}...")
+                try:
+                    # Kokoro returns a generator - we need to collect all chunks
+                    # Use speed parameter for more natural pacing
+                    generator = self.tts_pipeline(clean_text, voice=voice, speed=self.speech_speed)
+                    audio_chunks = []
+                    
+                    for i, (gs, ps, audio_chunk) in enumerate(generator):
+                        audio_chunks.append(audio_chunk)
+                    
+                    # Concatenate all chunks for this segment
+                    if audio_chunks:
+                        audio_data = np.concatenate(audio_chunks)
+                        if sample_rate is None:
+                            sample_rate = 24000  # Kokoro uses 24kHz
+                    else:
+                        print(f"   ⚠️  No audio generated for segment")
+                        continue
+                    
+                    # Apply speed adjustment if needed
+                    if self.speech_speed != 1.0:
+                        audio_data = self.adjust_audio_speed(audio_data, sample_rate, self.speech_speed)
+                    
+                    audio_segments.append(audio_data)
+                    
+                    # Log segment info
+                    duration = len(audio_data) / sample_rate
+                    print(f"   ✓ Segment duration: {duration:.1f} seconds")
+                    
+                except Exception as e:
+                    print(f"   ⚠️  Error generating segment {i+1}: {e}")
+                    continue
+            
+            # Concatenate all segments
+            if audio_segments:
+                print("\nCombining audio segments...")
+                
+                # Add small silence between segments (0.3 seconds)
+                silence_duration = 0.3
+                silence_samples = int(silence_duration * sample_rate)
+                silence = np.zeros(silence_samples)
+                
+                # Combine with silence between segments
+                combined_segments = []
+                for i, segment in enumerate(audio_segments):
+                    combined_segments.append(segment)
+                    if i < len(audio_segments) - 1:  # Don't add silence after last segment
+                        combined_segments.append(silence)
+                
+                combined_audio = np.concatenate(combined_segments)
+                
+                # Save the final audio
+                sf.write(output_file, combined_audio, sample_rate)
+                
+                total_duration = len(combined_audio) / sample_rate
+                print(f"\n✓ Combined audio saved to: {output_file}")
+                print(f"  Total duration: {total_duration:.1f} seconds ({total_duration / 60:.1f} minutes)")
+                print(f"  Total segments: {len(audio_segments)}")
+                
+                return output_file
+            else:
+                print("Error: No audio segments were generated successfully")
+                return None
+            
+        except Exception as e:
+            print(f"Error generating audio: {e}")
+            return None
+    
+    def create_podcast(self, content_source, output_file="podcast_kokoro.wav", duration_minutes=5):
+        """Create a complete podcast from content using Kokoro-82M"""
+        print("\n" + "="*50)
+        print("Creating podcast with Kokoro-82M TTS...")
+        print("="*50 + "\n")
+        
+        # Extract content from URL
+        print(f"1. Extracting content from: {content_source}")
+        title, content = self.extract_content_from_url(content_source)
+        print(f"   ✓ Article title: {title}")
+        
+        # Generate dialogue with Claude
+        print(f"\n2. Generating dialogue with Claude 3.5 Sonnet...")
+        print(f"   Target duration: {duration_minutes} minutes")
+        dialogue = self.generate_dialogue_with_bedrock(content, title, duration_minutes)
+        
+        # Generate audio with Kokoro
+        print("\n3. Generating audio with Kokoro-82M...")
+        print(f"   Speech speed: {self.speech_speed}x")
+        print(f"   No chunking required - Kokoro handles long texts")
+        
+        audio_file = self.generate_audio_with_kokoro(dialogue, output_file)
+        
+        if audio_file:
+            print(f"\n✓ Podcast successfully created: {output_file}")
+        else:
+            print("\n⚠️  Audio generation failed or not available")
+        
+        return audio_file
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Generate conversational podcasts with Kokoro-82M TTS",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Standard generation
+  python %(prog)s --url https://example.com/article --duration 5
+  
+  # With custom voices and settings
+  python %(prog)s --url https://example.com/article \\
+    --s1-voice af_heart \\
+    --s2-voice am_mystic \\
+    --speed 0.9 \\
+    --duration 10
+
+Available Kokoro voices (recommended for natural conversation):
+  American Female: 
+    - af_nova (warm, friendly)
+    - af_alloy (professional, clear)
+    - af_bella (enthusiastic)
+    - af_heart (neutral, versatile)
+  American Male:
+    - am_liam (natural, conversational)
+    - am_echo (deep, authoritative)
+    - am_michael (friendly, approachable)
+  British Female: bf_emma (elegant), bf_isabella (warm)
+  British Male: bm_george (distinguished), bm_lewis (casual)
+        """
+    )
+    
+    parser.add_argument("--url", 
+                       default="https://www.anthropic.com/news/claude-4",
+                       help="URL to generate podcast from")
+    parser.add_argument("-o", "--output", 
+                       default="podcast_kokoro.wav",
+                       help="Output audio file")
+    parser.add_argument("--cpu", 
+                       action="store_true",
+                       help="Force CPU usage")
+    parser.add_argument("--region", 
+                       default="us-west-2",
+                       help="AWS region for Bedrock")
+    parser.add_argument("--seed", 
+                       type=int,
+                       help="Random seed for reproducible generation")
+    parser.add_argument("--speed", 
+                       type=float,
+                       default=0.85,
+                       help="Speech speed (0.8-1.0, default: 0.85 for natural pace)")
+    parser.add_argument("--duration", 
+                       type=int,
+                       default=5,
+                       help="Target podcast duration in minutes (default: 5)")
+    
+    # Voice selection arguments
+    voice_group = parser.add_argument_group('voice selection options')
+    voice_group.add_argument("--s1-voice",
+                           default="af_nova",
+                           help="Voice for speaker S1 (default: af_nova - warm, friendly)")
+    voice_group.add_argument("--s2-voice",
+                           default="am_liam",
+                           help="Voice for speaker S2 (default: am_liam - natural, conversational)")
+    
+    args = parser.parse_args()
+    
+    # Validate speed parameter
+    if args.speed < 0.8 or args.speed > 1.0:
+        print("Warning: Speed should be between 0.8 and 1.0. Using default 0.85")
+        args.speed = 0.85
+    
+    # Create generator
+    generator = PodcastGenerator(
+        use_gpu=not args.cpu,
+        aws_region=args.region,
+        seed=args.seed,
+        speech_speed=args.speed,
+        s1_voice=args.s1_voice,
+        s2_voice=args.s2_voice
+    )
+    
+    # Generate podcast
+    generator.create_podcast(args.url, args.output, args.duration)
+
+if __name__ == "__main__":
+    main()

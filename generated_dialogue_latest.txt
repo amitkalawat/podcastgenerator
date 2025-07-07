@@ -1,0 +1,50 @@
+Generated Podcast Dialogue
+Article: Introducing Claude 4 \ Anthropic
+Speech Speed: 0.85x
+Target Duration: 3 minutes
+Voice Clone Audio: example_prompt.mp3
+==================================================
+
+Voice Clone Transcript:
+[S1] Open weights text to dialogue model. [S2] You get full control over scripts and voices.
+--------------------------------------------------
+
+Generated Dialogue:
+[S1] Hey, have you heard about the big news from Anthropic? They just announced Claude 4...
+[S2] No, what's that all about? I've been hearing some buzz.
+[S1] Well, they're actually launching two new AI models... Claude Opus 4 and Claude Sonnet 4.
+[S2] Two models? What's the difference between them?
+[S1] So, Opus 4 is their flagship model... it's apparently the world's best coding model right now. And Sonnet 4, well... it's more like an upgraded version of their previous model.
+[S2] That's interesting... How good is it at coding exactly?
+[S1] Get this... Opus 4 scored 72.5% on something called SWE-bench, which is, you know, a really important coding benchmark.
+[S2] Wow... but what can it actually do in practice?
+[S1] Well, one of the coolest things is that it can work continuously for several hours... Like, it can handle these really long, complex tasks without losing focus.
+[S2] Several hours? That's impressive... What kinds of tasks are we talking about?
+[S1] So, companies like Rakuten actually tested it with this huge open-source project... and it worked independently for 7 straight hours.
+[S2] That's wild... What about the other one, Sonnet 4?
+[S1] Sonnet 4 is pretty impressive too... It's more focused on everyday use cases, but it's still really capable at coding.
+[S2] How much do these models cost to use?
+[S1] Well... Opus 4 is $15 per million input tokens and $75 for output. Sonnet 4 is cheaper at $3 and $15...
+[S2] That's quite a price difference... Are there any new features?
+[S1] Yeah, actually... They've added this thing called extended thinking with tool use. The models can now use things like web search while they're working.
+[S2] Oh interesting... How does that help?
+[S1] It means they can, you know, alternate between thinking and using tools... makes their responses more accurate and comprehensive.
+[S2] What about memory? Can they remember things better now?
+[S1] That's actually one of the big improvements... They can now create and maintain memory files to store important information.
+[S2] Like... what kind of information?
+[S1] Well, they gave this interesting example... where Opus 4 was playing Pokémon and actually created its own navigation guide to remember where it had been.
+[S2] An AI playing Pokémon? That's pretty cool... What else can developers do with it?
+[S1] They've released something called Claude Code... which lets developers use it directly in their coding tools like VS Code and JetBrains.
+[S2] So it's like having an AI programming partner?
+[S1] Exactly... It can show you suggested code changes right in your editor, and even help with things like reviewing code on GitHub.
+[S2] This seems like a pretty big step forward... What are people saying about it?
+[S1] The feedback has been really positive... Companies like GitHub and Sourcegraph are already planning to use it in their products.
+[S2] Are there any concerns about safety?
+[S1] They've actually done extensive testing... and implemented something called AI Safety Levels to minimize risks.
+[S2] Where can people try this out?
+[S1] Well... It's available through Claude's website, but you can also access it through Amazon Bedrock and Google Cloud.
+[S2] Sounds like this could really change how we work with AI...
+[S1] Yeah, I think that's the goal... They're trying to create what they call a "virtual collaborator" that can really maintain focus and context over time.
+
+==================================================
+Total lines: 35

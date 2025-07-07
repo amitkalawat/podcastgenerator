@@ -1,0 +1,35 @@
+# Audio files (too large for git)
+*.wav
+*.mp3
+
+# OS files
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+temp_*
+debug_*
+
+# Local configuration
+.env
+config.local.json
+
+# AWS credentials (should never be committed)
+*.pem
+credentials
+.aws/

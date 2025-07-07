@@ -1,0 +1,17 @@
+Example_prompt.mp3 Transcript for Dia Audio Prompting
+=====================================================
+
+This is the transcript for the example_prompt.mp3 file from the Dia repository.
+Use this with the audio file for voice cloning/audio prompting.
+
+TRANSCRIPT:
+-----------
+[S1] Open weights text to dialogue model.
+[S2] You get full control over scripts and voices.
+
+NOTES:
+------
+- This example demonstrates emotional and expressive speech
+- Shows multiple speakers ([S1] and [S2])
+- Duration should be 5-10 seconds for best cloning results
+- When using for audio prompting, prepend this transcript before your main script

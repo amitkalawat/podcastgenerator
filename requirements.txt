@@ -1,0 +1,10 @@
+torch>=2.0.0
+transformers>=4.35.0
+scipy>=1.10.0
+numpy>=1.24.0
+beautifulsoup4>=4.12.0
+requests>=2.31.0
+boto3>=1.26.0
+soundfile>=0.12.0
+# Note: Also requires manual installation of Dia:
+# pip install git+https://github.com/nari-labs/dia.git

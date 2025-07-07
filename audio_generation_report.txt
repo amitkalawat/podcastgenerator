@@ -1,0 +1,10 @@
+Audio Generation Report
+==================================================
+Output file: claude4_small_chunks_podcast.wav
+Dialogue file: generated_dialogue.txt
+Debug chunks: debug_chunk_*_audio.wav
+
+To verify completeness:
+1. Check each debug_chunk_*_text.txt matches its audio
+2. Compare with generated_dialogue.txt
+3. Listen to the complete output file

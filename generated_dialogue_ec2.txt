@@ -1,0 +1,45 @@
+Generated Podcast Dialogue (Kokoro-82M)
+Article: Introducing Claude 4 \ Anthropic
+Speech Speed: 0.85x
+Target Duration: 3 minutes
+S1 Voice: af_nova
+S2 Voice: am_liam
+==================================================
+
+Generated Dialogue:
+[S1] Hey, have you heard about the big news from Anthropic? They just announced Claude 4... and it's pretty remarkable.
+[S2] No, I haven't caught up on that yet. What's so special about it?
+[S1] Well, they're actually launching two versions... Claude Opus 4 and Claude Sonnet 4. The Opus version is, apparently, the world's best coding model right now.
+[S2] Really? That's quite a claim... what makes it so good?
+[S1] It's leading on these important benchmarks, you know... like SWE-bench at 72.5%. But what's really impressive is that it can work continuously for several hours.
+[S2] Hours? That's... that's pretty amazing. What kind of tasks can it handle?
+[S1] So, it's particularly good at, um, complex coding tasks... and it can maintain focus on really long projects that need thousands of steps.
+[S2] How are companies actually using it in practice?
+[S1] Well... companies like Cursor and Replit are already seeing huge improvements. They say it's much better at understanding complex codebases and making precise changes.
+[S2] What about the other version... Sonnet 4, was it?
+[S1] Yeah, Sonnet 4 is like the... more practical version. It's still incredibly capable, but it's designed more for everyday use.
+[S2] How do they compare in terms of pricing?
+[S1] So... Opus 4 is priced at $15/$75 per million tokens, while Sonnet 4 is more affordable at $3/$15. But here's what's interesting...
+[S2] What's that?
+[S1] They've added this new feature called extended thinking with tool use... where the AI can actually use things like web search while it's working.
+[S2] That sounds really useful... Can both models do that?
+[S1] Yes, both can. And they've also improved something they call "memory capabilities"... where the AI can save important information over time.
+[S2] How does that work exactly?
+[S1] Think of it like... taking notes. When given access to local files, it can create its own memory files to store key information... They even tested it playing Pokémon.
+[S2] Wait, what? They tested it with Pokémon?
+[S1] Yeah, it's actually pretty clever... The AI created its own navigation guide while playing, keeping track of important information.
+[S2] That's fascinating... What about accessibility? Where can people actually use these models?
+[S1] They're available through multiple platforms... You can access them through Anthropic directly, Amazon Bedrock, or Google Cloud's Vertex AI.
+[S2] And what about developers? Are there any special tools for them?
+[S1] Actually, yes... They've just made Claude Code generally available, with some pretty cool features like... GitHub Actions integration and support for popular IDEs.
+[S2] How's the developer community responding to all this?
+[S1] From what I've seen... the feedback is really positive. GitHub is even planning to use Sonnet 4 in their Copilot service.
+[S2] That's quite an endorsement... What about safety considerations?
+[S1] Well, Anthropic says they've done extensive testing... and implemented something called AI Safety Levels. They're particularly focused on ASL-3.
+[S2] Do you think this is going to change how people work with AI?
+[S1] I think it's a significant step forward... especially in terms of having an AI that can maintain context and focus over longer periods.
+[S2] Sounds like we're getting closer to having real virtual collaborators...
+[S1] Exactly... and that's really what Anthropic seems to be aiming for with these models.
+
+==================================================
+Total lines: 33

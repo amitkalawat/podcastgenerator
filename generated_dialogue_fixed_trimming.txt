@@ -1,0 +1,48 @@
+Generated Podcast Dialogue
+Article: Introducing Claude 4 \ Anthropic
+Speech Speed: 0.85x
+Target Duration: 5 minutes
+Voice Clone Audio: example_prompt.mp3
+==================================================
+
+Voice Clone Transcript:
+[S1] Open weights text to dialogue model. [S2] You get full control over scripts and voices.
+--------------------------------------------------
+
+Generated Dialogue:
+[S1] Hey, have you heard about the big news from Anthropic? They just announced Claude 4...
+[S2] No, what's that all about? I'm always curious about new AI developments.
+[S1] Well, they're actually launching two new models... Claude Opus 4 and Claude Sonnet 4.
+[S2] Oh interesting! What makes these different from previous versions?
+[S1] So, get this... Claude Opus 4 is apparently the world's best coding model right now. It's, you know, really impressive with complex tasks.
+[S2] Best coding model? That's a pretty big claim...
+[S1] Yeah, and they've got the numbers to back it up... It's scoring 72.5% on something called SWE-bench, which is, like, a major benchmark for coding.
+[S2] What can it actually do though, in practical terms?
+[S1] Well... it can work continuously for several hours, handling really complex problems. And, what's really cool is that it can use tools like web search while it's thinking.
+[S2] Hold on... it can search the web while working? How's that different from before?
+[S1] So, this is new... It can actually alternate between reasoning and using tools, which makes its responses much better. And get this... it can use multiple tools at the same time.
+[S2] That sounds pretty advanced. What about the other model, Sonnet 4?
+[S1] Right, so Sonnet 4 is like... the more practical version. It's still super capable, but it's designed more for everyday use.
+[S2] Who gets access to these models?
+[S1] Well... Opus 4 and Sonnet 4 are available on their Pro, Max, Team, and Enterprise plans. But, you know, Sonnet 4 is also available to free users.
+[S2] What about the pricing? These must be expensive...
+[S1] Actually... it's staying consistent with their previous models. Opus 4 is $15/$75 per million tokens, and Sonnet 4 is $3/$15.
+[S2] That's interesting... Are companies already using these models?
+[S1] Yeah, quite a few actually... GitHub is using Sonnet 4 in their Copilot tool, and companies like Cursor and Replit are reporting some pretty impressive results with Opus 4.
+[S2] What kind of results are they seeing?
+[S1] Well... Replit mentioned better precision and, like, huge improvements in handling complex changes across multiple files. And Rakuten even had it running independently for 7 hours...
+[S2] Seven hours? That's... impressive. What else can these models do?
+[S1] One really cool feature is their memory capabilities... When developers give Claude access to local files, it can actually create and maintain its own memory files.
+[S2] What do you mean by memory files?
+[S1] So... imagine it's working on a task, right? It can actually store important information and refer back to it later, kind of like how we take notes.
+[S2] That sounds really useful. Are there any other new features?
+[S1] Yeah, they're also releasing something called Claude Code... It's now generally available and works directly in popular coding tools like VS Code and JetBrains.
+[S2] So developers can use it right in their usual workspace?
+[S1] Exactly... And it can even respond to code review feedback on GitHub and fix errors automatically.
+[S2] This all sounds pretty groundbreaking... Where do you think this is heading?
+[S1] Well... I think we're seeing the emergence of what they're calling a "virtual collaborator." You know, something that can really maintain context and focus on longer projects...
+[S2] That's fascinating... The future of AI is happening pretty fast, isn't it?
+[S1] Yeah, it really is... And what's interesting is they're doing all this while focusing on safety too. They've got these special measures in place for something called AI Safety Levels.
+
+==================================================
+Total lines: 33

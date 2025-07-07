@@ -1,0 +1,42 @@
+Generated Podcast Dialogue
+Article: Introducing Claude 4 \ Anthropic
+Speech Speed: 0.85x
+Target Duration: 2 minutes
+Voice Clone Audio: example_prompt.mp3
+==================================================
+
+Voice Clone Transcript:
+[S1] Open weights text to dialogue model. [S2] You get full control over scripts and voices.
+--------------------------------------------------
+
+Generated Dialogue:
+[S1] Hey, have you heard about the big news from Anthropic? They just announced Claude 4... and it's pretty groundbreaking.
+[S2] No, I haven't! What's so special about it?
+[S1] Well, they're actually releasing two versions... Claude Opus 4 and Claude Sonnet 4. The Opus version is, like, apparently the world's best coding model right now.
+[S2] Really? That's quite a claim... How good are we talking about?
+[S1] So, on these technical benchmarks... it's hitting 72.5% on something called SWE-bench, which is, you know, pretty impressive for coding tasks.
+[S2] What can it actually do with that kind of power?
+[S1] Get this... it can work continuously for several hours, handling complex tasks that need thousands of steps. And it's got this new feature called extended thinking with tool use.
+[S2] Hold on... what do you mean by extended thinking with tool use?
+[S1] Basically... it can use tools like web search while it's thinking, and kind of... switch between reasoning and using those tools to give better answers.
+[S2] That sounds really useful. What about the other version... Sonnet 4, was it?
+[S1] Yeah, Sonnet 4 is like... the more practical version. Still super capable, but more for everyday use. It's actually free for regular users.
+[S2] How much does the Opus version cost?
+[S1] Well, they're keeping the same pricing as before... $15 per million input tokens and $75 for output tokens for Opus 4.
+[S2] And companies are already using this?
+[S1] Oh yeah... GitHub is actually incorporating Sonnet 4 into their Copilot service, and companies like Replit and Cursor are saying it's a huge leap forward.
+[S2] What about memory? Can it remember things from previous conversations?
+[S1] That's actually one of the cool new features... When developers give it access to local files, it can create these, like, memory files to store important information.
+[S2] So it's kind of like... building its own knowledge base?
+[S1] Exactly! They even showed an example where it was playing Pokémon and... creating its own navigation guide to remember where it had been.
+[S2] That's wild... Where can people actually access these models?
+[S1] They're available through multiple platforms... Anthropic's own API, Amazon Bedrock, and Google Cloud's Vertex AI.
+[S2] Sounds like they're really making it accessible... What about safety measures?
+[S1] Yeah, they've definitely thought about that... They've implemented something called AI Safety Levels, and they're specifically targeting ASL-3.
+[S2] This feels like... a pretty significant step forward for AI, doesn't it?
+[S1] It really does... I mean, we're getting closer to having these AI systems that can actually be like... virtual collaborators that can maintain focus and context over long periods.
+[S2] When can people start using it?
+[S1] It's available right now... You can try it through Claude's platform or through their new Claude Code system, which integrates with popular coding tools.
+
+==================================================
+Total lines: 27
