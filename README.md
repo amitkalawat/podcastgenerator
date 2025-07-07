@@ -30,10 +30,11 @@ Generate natural-sounding conversational podcasts from any web content using AI 
 Listen to sample podcasts generated about Claude 4 announcement:
 
 ### Dia-1.6B Sample (with voice cloning)
-[🔊 Listen: dia_1.6b_sample.wav](https://github.com/amitkalawat/podcastgenerator/raw/main/samples/dia_1.6b_sample.wav) (1.9 minutes, 9.8MB)
+[🔊 Listen: dia_1.6b_sample.wav](https://github.com/amitkalawat/podcastgenerator/raw/main/samples/dia_1.6b_sample.wav) (2.5 minutes, 12MB)
 - ✨ Voice cloned from [example_prompt.mp3](samples/example_prompt.mp3)
-- 🎯 Natural pacing with fixed trimming
-- 🔧 Generated with: `podcast_generator_fixed_trimming.py`
+- 🎯 Small chunk processing (4-line chunks) for complete dialogue
+- 📊 148 seconds total, all dialogue sections included
+- 🔧 Generated with: `podcast_generator_small_chunks.py`
 
 ### Kokoro-82M Samples
 [🔊 Listen: kokoro_82m_sample.wav](https://github.com/amitkalawat/podcastgenerator/raw/main/samples/kokoro_82m_sample.wav) (4.1 minutes, 11MB)

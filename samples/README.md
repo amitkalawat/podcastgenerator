@@ -5,9 +5,10 @@ This directory contains sample outputs from both TTS models.
 ## Files
 
 ### Dia-1.6B Samples
-- **dia_1.6b_sample.wav** (1.9 minutes)
+- **dia_1.6b_sample.wav** (2.5 minutes, 148 seconds)
   - Generated using voice cloning from `example_prompt.mp3`
-  - Shows fixed trimming with silence detection
+  - Uses small chunk processing (4-line chunks)
+  - Complete dialogue with all sections included
   - Natural conversation about Claude 4
 
 ### Kokoro-82M Samples  
@@ -28,8 +29,8 @@ This directory contains sample outputs from both TTS models.
 ## Generation Commands
 
 ```bash
-# Dia-1.6B with voice cloning
-python podcast_generator_fixed_trimming.py \
+# Dia-1.6B with voice cloning (small chunks)
+python podcast_generator_small_chunks.py \
   --voice-clone-audio example_prompt.mp3 \
   --url https://www.anthropic.com/news/claude-4
 
