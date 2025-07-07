@@ -30,17 +30,19 @@ Generate natural-sounding conversational podcasts from any web content using AI 
 Listen to sample podcasts generated about Claude 4 announcement:
 
 ### Dia-1.6B Sample (with voice cloning)
-- 📎 [Listen to sample](samples/dia_1.6b_sample.wav) (1.9 minutes)
-- Features: Voice cloning from example_prompt.mp3, natural pacing
-- Generated with: `podcast_generator_fixed_trimming.py`
+[🔊 Listen: dia_1.6b_sample.wav](https://github.com/amitkalawat/podcastgenerator/raw/main/samples/dia_1.6b_sample.wav) (1.9 minutes, 9.8MB)
+- ✨ Voice cloned from [example_prompt.mp3](samples/example_prompt.mp3)
+- 🎯 Natural pacing with fixed trimming
+- 🔧 Generated with: `podcast_generator_fixed_trimming.py`
 
 ### Kokoro-82M Samples
-- 📎 [Natural voices sample](samples/kokoro_82m_sample.wav) (4.1 minutes)
-  - Voices: af_nova (warm female) + am_liam (conversational male)
-- 📎 [Short demo](samples/kokoro_82m_demo.wav) (54 seconds)
-  - Quick example with fallback dialogue
+[🔊 Listen: kokoro_82m_sample.wav](https://github.com/amitkalawat/podcastgenerator/raw/main/samples/kokoro_82m_sample.wav) (4.1 minutes, 11MB)
+- 🎭 Voices: af_nova (warm female) + am_liam (conversational male)  
+- 🚀 No chunking required - handles full dialogue
 
-> **Note**: GitHub might not play audio files directly. Download them to listen locally.
+[🔊 Listen: kokoro_82m_demo.wav](https://github.com/amitkalawat/podcastgenerator/raw/main/samples/kokoro_82m_demo.wav) (54 seconds, 2.5MB)
+- 💨 Quick demo with fallback dialogue
+- 🎙️ Shows voice quality and natural pacing
 
 ## Requirements
 
