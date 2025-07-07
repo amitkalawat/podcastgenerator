@@ -2,6 +2,10 @@
 *.wav
 *.mp3
 
+# Exception for samples directory
+!samples/*.wav
+!samples/*.mp3
+
 # OS files
 .DS_Store
 
