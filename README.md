@@ -1,5 +1,9 @@
 # Podcast Generator
 
+## why?
+
+find and research viable and scalable OSS alternatives to proprietary TTS models and getting them working with Bedrock and AWS. Work in progress repo.
+
 Generate natural-sounding conversational podcasts from any web content using AI dialogue generation and advanced text-to-speech models.
 
 ## 🌟 Features
