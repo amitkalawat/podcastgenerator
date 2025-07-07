@@ -1,15 +1,29 @@
-# Podcast Generator with Dia-1.6B and Claude 3.5 Sonnet
+# Podcast Generator
 
-A sophisticated podcast generation system that creates natural-sounding conversational podcasts from web articles using AI.
+Generate natural-sounding conversational podcasts from any web content using AI dialogue generation and advanced text-to-speech models.
 
-## Features
+## 🌟 Features
 
-- 🎙️ **Natural Conversational Podcasts**: Generates realistic dialogue between two speakers
-- 🔊 **Voice Cloning**: Clone voices from audio samples for consistent speaker identity
-- 🎚️ **Speed Control**: Adjustable speech speed for natural pacing
-- 🤖 **Claude Integration**: Uses Claude 3.5 Sonnet via AWS Bedrock for intelligent dialogue generation
-- 🎵 **Dia-1.6B TTS**: State-of-the-art text-to-speech synthesis
-- 🌐 **Web Content Extraction**: Automatically extracts and processes web articles
+### Two TTS Model Options
+
+#### 1. **Dia-1.6B** (Advanced)
+- 🔊 Voice cloning from audio samples
+- 🎭 Consistent speaker identity
+- 📊 1.6B parameters for high quality
+- ⚡ Requires chunking for long content
+
+#### 2. **Kokoro-82M** (Lightweight)
+- 🚀 No token limits - handles long content
+- 🎙️ 54 built-in natural voices
+- 💨 Faster generation (82M parameters)
+- 🔧 Simpler implementation
+
+### Core Features
+- 🤖 **AI Dialogue**: Claude 3.5 Sonnet via AWS Bedrock
+- 🎚️ **Speed Control**: Adjustable speech pace (0.8-1.0x)
+- 🌐 **Web Scraping**: Automatic content extraction
+- ☁️ **EC2 Ready**: IAM role authentication support
+- 🔒 **Secure**: No hardcoded credentials
 
 ## Requirements
 
