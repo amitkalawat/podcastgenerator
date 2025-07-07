@@ -51,6 +51,100 @@ Listen to sample podcasts generated about Claude 4 announcement:
 - 💨 Quick demo with fallback dialogue
 - 🎙️ Shows voice quality and natural pacing
 
+## 🤖 AWS Bedrock & Claude Integration
+
+This project leverages **Claude 3.5 Sonnet** through **AWS Bedrock** for intelligent dialogue generation. The integration creates natural, engaging conversations from any web content.
+
+### How It Works
+
+1. **Content Analysis**: The system fetches and extracts key information from web articles
+2. **AI Dialogue Generation**: Claude 3.5 Sonnet transforms the content into natural conversation
+3. **Personality-Driven Speakers**: 
+   - **S1**: Analytical and informative, provides context and explanations
+   - **S2**: Curious and reactive, asks questions and shows enthusiasm
+4. **Natural Speech Patterns**: Claude adds pauses, filler words, and conversational elements
+
+### Bedrock Configuration
+
+```python
+# Initialize Bedrock client
+self.bedrock = boto3.client(
+    service_name='bedrock-runtime',
+    region_name='us-west-2'
+)
+
+# Use Claude 3.5 Sonnet v2
+self.model_id = "anthropic.claude-3-5-sonnet-20241022-v2:0"
+
+# Request configuration
+body = {
+    "anthropic_version": "bedrock-2023-05-31",
+    "max_tokens": 8000,
+    "temperature": 0.8,
+    "messages": [{
+        "role": "user",
+        "content": prompt
+    }]
+}
+```
+
+### Authentication Methods
+
+#### 1. Local Development (AWS CLI)
+```bash
+# Configure AWS credentials
+aws configure
+# Set region (us-west-2 recommended)
+# Enter access key and secret key
+```
+
+#### 2. EC2 with IAM Roles (Recommended for Production)
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Effect": "Allow",
+        "Action": ["bedrock:InvokeModel"],
+        "Resource": "arn:aws:bedrock:*:*:model/anthropic.claude-3-5-sonnet*"
+    }]
+}
+```
+
+### Claude's Dialogue Generation Process
+
+1. **Content Understanding**: Analyzes article structure, key points, and narrative flow
+2. **Dialogue Planning**: Determines conversation flow and information distribution
+3. **Natural Language**: Creates realistic back-and-forth with proper pacing
+4. **Quality Control**: Ensures all key points are covered conversationally
+
+### Example Prompt Structure
+
+```python
+prompt = f"""
+Transform this content into a conversational podcast between two speakers.
+
+Article Title: {title}
+Article Content: {content[:8000]}
+
+Guidelines:
+- Create natural conversation, not a script
+- Add pauses with "..." and commas for natural speech rhythm
+- Include filler words ("well", "you know", "I mean") sparingly
+- S1 should be analytical and informative
+- S2 should be curious and reactive
+- Cover all key points while maintaining engaging flow
+- Target duration: {duration} minutes
+"""
+```
+
+### Benefits of Using Claude via Bedrock
+
+- **Contextual Understanding**: Deep comprehension of technical and complex topics
+- **Natural Conversation**: Creates authentic dialogue that sounds human
+- **Consistent Quality**: Reliable output across different content types
+- **Scalability**: Handles articles of varying lengths and complexities
+- **No Token Limits**: Bedrock handles long content seamlessly
+
 ## 📁 Repository Structure
 
 ```
@@ -281,100 +375,6 @@ The script generates:
 - Use GPU for 5-10x faster generation
 - Voice cloning adds ~20% to generation time
 - First run downloads models (~6GB)
-
-## 🤖 AWS Bedrock & Claude Integration
-
-This project leverages **Claude 3.5 Sonnet** through **AWS Bedrock** for intelligent dialogue generation. The integration creates natural, engaging conversations from any web content.
-
-### How It Works
-
-1. **Content Analysis**: The system fetches and extracts key information from web articles
-2. **AI Dialogue Generation**: Claude 3.5 Sonnet transforms the content into natural conversation
-3. **Personality-Driven Speakers**: 
-   - **S1**: Analytical and informative, provides context and explanations
-   - **S2**: Curious and reactive, asks questions and shows enthusiasm
-4. **Natural Speech Patterns**: Claude adds pauses, filler words, and conversational elements
-
-### Bedrock Configuration
-
-```python
-# Initialize Bedrock client
-self.bedrock = boto3.client(
-    service_name='bedrock-runtime',
-    region_name='us-west-2'
-)
-
-# Use Claude 3.5 Sonnet v2
-self.model_id = "anthropic.claude-3-5-sonnet-20241022-v2:0"
-
-# Request configuration
-body = {
-    "anthropic_version": "bedrock-2023-05-31",
-    "max_tokens": 8000,
-    "temperature": 0.8,
-    "messages": [{
-        "role": "user",
-        "content": prompt
-    }]
-}
-```
-
-### Authentication Methods
-
-#### 1. Local Development (AWS CLI)
-```bash
-# Configure AWS credentials
-aws configure
-# Set region (us-west-2 recommended)
-# Enter access key and secret key
-```
-
-#### 2. EC2 with IAM Roles (Recommended for Production)
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [{
-        "Effect": "Allow",
-        "Action": ["bedrock:InvokeModel"],
-        "Resource": "arn:aws:bedrock:*:*:model/anthropic.claude-3-5-sonnet*"
-    }]
-}
-```
-
-### Claude's Dialogue Generation Process
-
-1. **Content Understanding**: Analyzes article structure, key points, and narrative flow
-2. **Dialogue Planning**: Determines conversation flow and information distribution
-3. **Natural Language**: Creates realistic back-and-forth with proper pacing
-4. **Quality Control**: Ensures all key points are covered conversationally
-
-### Example Prompt Structure
-
-```python
-prompt = f"""
-Transform this content into a conversational podcast between two speakers.
-
-Article Title: {title}
-Article Content: {content[:8000]}
-
-Guidelines:
-- Create natural conversation, not a script
-- Add pauses with "..." and commas for natural speech rhythm
-- Include filler words ("well", "you know", "I mean") sparingly
-- S1 should be analytical and informative
-- S2 should be curious and reactive
-- Cover all key points while maintaining engaging flow
-- Target duration: {duration} minutes
-"""
-```
-
-### Benefits of Using Claude via Bedrock
-
-- **Contextual Understanding**: Deep comprehension of technical and complex topics
-- **Natural Conversation**: Creates authentic dialogue that sounds human
-- **Consistent Quality**: Reliable output across different content types
-- **Scalability**: Handles articles of varying lengths and complexities
-- **No Token Limits**: Bedrock handles long content seamlessly
 
 ## Architecture
 
