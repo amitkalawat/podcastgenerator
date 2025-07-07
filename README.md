@@ -51,6 +51,26 @@ Listen to sample podcasts generated about Claude 4 announcement:
 - 💨 Quick demo with fallback dialogue
 - 🎙️ Shows voice quality and natural pacing
 
+## 📁 Repository Structure
+
+```
+podcastgenerator/
+├── src/                    # Source code
+│   ├── dia/               # Dia-1.6B implementations
+│   │   ├── podcast_generator_small_chunks.py     # ⭐ Recommended
+│   │   ├── podcast_generator_fixed_trimming.py   # Advanced trimming
+│   │   └── ...
+│   └── kokoro/            # Kokoro-82M implementations
+│       ├── podcast_generator_kokoro.py           # Local version
+│       └── podcast_generator_kokoro_ec2.py       # ⭐ EC2 production
+├── samples/               # Audio samples & demos
+├── dialogs/              # Generated dialogue examples
+├── scripts/              # Deployment scripts
+├── tests/                # Test scripts
+├── docs/                 # Documentation
+└── requirements.txt      # Python dependencies
+```
+
 ## Requirements
 
 ### System Requirements
@@ -84,20 +104,37 @@ pip install git+https://github.com/nari-labs/dia.git
 aws configure
 ```
 
+## 🚀 Quick Start
+
+### Using Dia-1.6B (with voice cloning)
+```bash
+python src/dia/podcast_generator_small_chunks.py \
+  --voice-clone-audio samples/example_prompt.mp3 \
+  --url https://example.com/article
+```
+
+### Using Kokoro-82M (no token limits)
+```bash
+python src/kokoro/podcast_generator_kokoro.py \
+  --url https://example.com/article \
+  --s1-voice af_nova \
+  --s2-voice am_liam
+```
+
 ## Usage
 
 ### Basic Usage
 
 Generate a podcast from a web article:
 ```bash
-python podcast_generator_final.py --url "https://example.com/article" --output my_podcast.wav
+python src/dia/podcast_generator_final.py --url "https://example.com/article" --output my_podcast.wav
 ```
 
 ### With Voice Cloning
 
 Clone voices from an audio sample:
 ```bash
-python podcast_generator_final.py \
+python src/dia/podcast_generator_final.py \
     --url "https://example.com/article" \
     --voice-clone-audio "reference_audio.mp3" \
     --voice-clone-transcript "[S1] Reference text. [S2] More reference text." \
@@ -108,7 +145,7 @@ python podcast_generator_final.py \
 
 For slower, more natural speech:
 ```bash
-python podcast_generator_final.py \
+python src/dia/podcast_generator_final.py \
     --url "https://example.com/article" \
     --speed 0.85 \
     --output natural_podcast.wav
@@ -131,14 +168,14 @@ python podcast_generator_final.py \
 
 ### 1. Standard Podcast Generation
 ```bash
-python podcast_generator_final.py \
+python src/dia/podcast_generator_final.py \
     --url "https://www.aboutamazon.com/news/aws/aws-project-rainier-ai-trainium-chips-compute-cluster" \
     --output aws_rainier_podcast.wav
 ```
 
 ### 2. Voice Cloning with Example Audio
 ```bash
-python podcast_generator_final.py \
+python src/dia/podcast_generator_final.py \
     --url "https://www.aboutamazon.com/news/aws/aws-project-rainier-ai-trainium-chips-compute-cluster" \
     --voice-clone-audio example_prompt.mp3 \
     --speed 0.85 \
@@ -147,7 +184,7 @@ python podcast_generator_final.py \
 
 ### 3. Reproducible Generation with Seed
 ```bash
-python podcast_generator_final.py \
+python src/dia/podcast_generator_final.py \
     --url "https://example.com/article" \
     --seed 42 \
     --speed 0.9 \
@@ -181,7 +218,7 @@ The repository includes `example_prompt.mp3` with transcript:
 
 Use it directly:
 ```bash
-python podcast_generator_final.py \
+python src/dia/podcast_generator_final.py \
     --url "https://example.com/article" \
     --voice-clone-audio example_prompt.mp3 \
     --output podcast_with_example_voices.wav
