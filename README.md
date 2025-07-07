@@ -37,8 +37,14 @@ Listen to sample podcasts generated about Claude 4 announcement:
 - 🔧 Generated with: `podcast_generator_small_chunks.py`
 
 ### Kokoro-82M Samples
+[🔊 Listen: kokoro_82m_ec2_sample.wav](https://github.com/amitkalawat/podcastgenerator/raw/main/samples/kokoro_82m_ec2_sample.wav) (3.9 minutes, 11MB)
+- 🚀 Generated on EC2 with AWS Bedrock + IAM roles
+- 🎭 Voices: af_nova (warm female) + am_liam (conversational male)
+- 💎 Full AI-generated dialogue about Claude 4
+- 🔧 Generated with: `podcast_generator_kokoro_ec2.py`
+
 [🔊 Listen: kokoro_82m_sample.wav](https://github.com/amitkalawat/podcastgenerator/raw/main/samples/kokoro_82m_sample.wav) (4.1 minutes, 11MB)
-- 🎭 Voices: af_nova (warm female) + am_liam (conversational male)  
+- 🎯 Local generation example
 - 🚀 No chunking required - handles full dialogue
 
 [🔊 Listen: kokoro_82m_demo.wav](https://github.com/amitkalawat/podcastgenerator/raw/main/samples/kokoro_82m_demo.wav) (54 seconds, 2.5MB)

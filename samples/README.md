@@ -12,6 +12,12 @@ This directory contains sample outputs from both TTS models.
   - Natural conversation about Claude 4
 
 ### Kokoro-82M Samples  
+- **kokoro_82m_ec2_sample.wav** (3.9 minutes)
+  - Generated on EC2 with GPU acceleration
+  - Full AI dialogue from AWS Bedrock
+  - af_nova (S1) + am_liam (S2)
+  - Production example with IAM role auth
+
 - **kokoro_82m_sample.wav** (4.1 minutes)
   - Full podcast with natural voices
   - af_nova (S1) + am_liam (S2)
@@ -39,4 +45,9 @@ python podcast_generator_kokoro.py \
   --s1-voice af_nova \
   --s2-voice am_liam \
   --duration 5
+
+# Kokoro-82M on EC2 with Bedrock
+python podcast_generator_kokoro_ec2.py \
+  --url https://www.anthropic.com/news/claude-4 \
+  --duration 3
 ```
